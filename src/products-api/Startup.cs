@@ -1,3 +1,5 @@
+using core.mappers;
+using core.services;
 using entities.main;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,9 +29,12 @@ namespace products_api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
             services.AddDbContext<productsContext>();
+            services.AddAutoMapper(typeof(EntityMapperProfile));
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Products", Version = "v1" }));
+
+            services.AddTransient<ILaptopsService, LaptopsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,7 +46,9 @@ namespace products_api
             }
 
             app.UseCors(builder => builder
-                    .AllowAnyOrigin());
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
 
             app.UseRouting();
 

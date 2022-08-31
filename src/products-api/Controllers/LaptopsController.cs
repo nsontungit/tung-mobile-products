@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using core.models;
+using core.services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using products_api.Models;
 using System;
@@ -12,6 +14,11 @@ namespace products_api.Controllers
     [ApiController]
     public class LaptopsController : ControllerBase
     {
+        readonly ILaptopsService _laptopService;
+        public LaptopsController(ILaptopsService laptopService)
+        {
+            _laptopService = laptopService;
+        }
         [HttpGet]
         public IActionResult GetOne()
         {
@@ -24,5 +31,12 @@ namespace products_api.Controllers
             };
             return Ok(ApiResultCreator.Create(result));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateLaptop([FromBody]LaptopDto laptopDto)
+        {
+            await _laptopService.CreateOne(laptopDto);
+            return Ok(ApiResultCreator.Create(null, "Create new laptop successfully"));
+        } 
     }
 }
