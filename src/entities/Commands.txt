@@ -1,0 +1,2 @@
+﻿// Scaffold
+Scaffold-DbContext "server=localhost;port=3309;user=root;password=123456;database=products" MySql.EntityFrameworkCore -OutputDir main -f

@@ -19,8 +19,10 @@ namespace entities.main
         {
         }
 
+        public virtual DbSet<Brand> Brand { get; set; }
         public virtual DbSet<FlywaySchemaHistory> FlywaySchemaHistory { get; set; }
-        public virtual DbSet<Laptops> Laptops { get; set; }
+        public virtual DbSet<Laptop> Laptop { get; set; }
+        public virtual DbSet<Option> Option { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -33,6 +35,33 @@ namespace entities.main
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Brand>(entity =>
+            {
+                entity.ToTable("brand");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Active)
+                    .HasColumnName("active")
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'1'");
+
+                entity.Property(e => e.Country)
+                    .HasColumnName("country")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.Created)
+                    .HasColumnName("created")
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.LastUpdate).HasColumnName("lastUpdate");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnName("name")
+                    .HasMaxLength(250);
+            });
+
             modelBuilder.Entity<FlywaySchemaHistory>(entity =>
             {
                 entity.HasKey(e => e.InstalledRank)
@@ -76,15 +105,26 @@ namespace entities.main
                     .HasMaxLength(50);
             });
 
-            modelBuilder.Entity<Laptops>(entity =>
+            modelBuilder.Entity<Laptop>(entity =>
             {
-                entity.ToTable("laptops");
+                entity.ToTable("laptop");
 
                 entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Active)
+                    .HasColumnName("active")
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'1'");
 
                 entity.Property(e => e.Brand)
                     .HasColumnName("brand")
                     .HasMaxLength(50);
+
+                entity.Property(e => e.Created)
+                    .HasColumnName("created")
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.LastUpdate).HasColumnName("lastUpdate");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -104,9 +144,44 @@ namespace entities.main
 
                 entity.Property(e => e.Rom).HasColumnName("ROM");
 
-                entity.Property(e => e.ScreenSize)
-                    .HasColumnName("screen_size")
-                    .HasColumnType("float(2,2)");
+                entity.Property(e => e.ScreenSize).HasColumnName("screen_size");
+            });
+
+            modelBuilder.Entity<Option>(entity =>
+            {
+                entity.ToTable("option");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Active)
+                    .HasColumnName("active")
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'1'");
+
+                entity.Property(e => e.Created)
+                    .HasColumnName("created")
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.Label)
+                    .HasColumnName("label")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.LastUpdate).HasColumnName("lastUpdate");
+
+                entity.Property(e => e.Table)
+                    .IsRequired()
+                    .HasColumnName("table")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.Type)
+                    .IsRequired()
+                    .HasColumnName("type")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.Value)
+                    .IsRequired()
+                    .HasColumnName("value")
+                    .HasMaxLength(250);
             });
 
             OnModelCreatingPartial(modelBuilder);

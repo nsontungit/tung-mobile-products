@@ -11,7 +11,7 @@ namespace core.mappers
     {
         public EntityMapperProfile()
         {
-            CreateMap<LaptopDto, Laptops>();
+            CreateMap<LaptopDto, Laptop>();
         }
     }
 }

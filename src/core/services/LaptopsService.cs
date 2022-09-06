@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using core.models;
+using core.utils;
 using entities.main;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +14,7 @@ namespace core.services
     public interface ILaptopsService
     {
         Task GetOne(int id);
+        Task<Laptop[]> GetAll();
         Task GetMany();
         Task CreateOne(LaptopDto laptopDto);
         Task CreateMany();
@@ -18,11 +22,15 @@ namespace core.services
         Task UpdateMany();
         Task DeleteOne(int id);
         Task DeleteMany();
+        Task<Option[]> GetLaptopOptions(string type);
+        Task<Option[]> GetLaptopBrandOptions();
+        Task<Option[]> GetAllOptions();
     }
     public class LaptopsService : ILaptopsService
     {
         readonly productsContext _context;
         readonly IMapper _mapper;
+        private const string tableName = "laptop";
         public LaptopsService(productsContext context,
             IMapper mapper)
         {
@@ -37,8 +45,9 @@ namespace core.services
 
         public async Task CreateOne(LaptopDto laptopDto)
         {
-            var laptop = _mapper.Map<Laptops>(laptopDto);
-            _context.Laptops.Add(laptop);
+            var laptop = _mapper.Map<Laptop>(laptopDto);
+            laptop = laptop.Normalize();
+            _context.Laptop.Add(laptop);
             await _context.SaveChangesAsync();
         }
 
@@ -52,6 +61,12 @@ namespace core.services
             throw new NotImplementedException();
         }
 
+        public Task<Laptop[]> GetAll()
+        {
+            var laptops = _context.Laptop.ToArray();
+            return Task.FromResult(laptops);
+        }
+
         public Task GetMany()
         {
             throw new NotImplementedException();
@@ -62,6 +77,14 @@ namespace core.services
             throw new NotImplementedException();
         }
 
+        public async Task<Option[]> GetLaptopOptions(string type)
+        {
+            var options = await _context.Option
+                .Where(o => o.Type == type && o.Table == tableName)
+                .ToArrayAsync();
+            return options;
+        }
+
         public Task UpdateMany()
         {
             throw new NotImplementedException();
@@ -70,6 +93,22 @@ namespace core.services
         public Task UpdateOne(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Option[]> GetAllOptions()
+        {
+            var options = await _context.Option
+                .Where(o => o.Table == tableName)
+                .ToArrayAsync();
+            return options;
+        }
+
+        public async Task<Option[]> GetLaptopBrandOptions()
+        {
+            var options = await _context.Option
+                .Where(o => o.Table == "brand" && o.Type == "laptop-brand")
+                .ToArrayAsync();
+            return options;
         }
     }
 }

@@ -20,16 +20,28 @@ namespace products_api.Controllers
             _laptopService = laptopService;
         }
         [HttpGet]
-        public IActionResult GetOne()
+        public async Task<IActionResult> GetAll()
         {
-            var result = new
-            {
-                Name = "Thinkpad3",
-                Ram = "16GB",
-                Rom = "256GB",
-                Price = 223.22
-            };
-            return Ok(ApiResultCreator.Create(result));
+            var laptops = await _laptopService.GetAll();
+            return Ok(ApiResultCreator.Create(laptops));
+        }
+        [HttpGet("options/{type}")]
+        public async Task<IActionResult> GetOptions(string type)
+        {
+            var options = await _laptopService.GetLaptopOptions(type);
+            return Ok(ApiResultCreator.Create(options));
+        }
+        [HttpGet("options/laptop-brand")]
+        public async Task<IActionResult> GetLaptopBrandOptions()
+        {
+            var options = await _laptopService.GetLaptopBrandOptions();
+            return Ok(ApiResultCreator.Create(options));
+        }
+        [HttpGet("options")]
+        public async Task<IActionResult> GetAllOptions()
+        {
+            var options = await _laptopService.GetAllOptions();
+            return Ok(ApiResultCreator.Create(options));
         }
 
         [HttpPost]
@@ -37,6 +49,7 @@ namespace products_api.Controllers
         {
             await _laptopService.CreateOne(laptopDto);
             return Ok(ApiResultCreator.Create(null, "Create new laptop successfully"));
-        } 
+        }
+        
     }
 }

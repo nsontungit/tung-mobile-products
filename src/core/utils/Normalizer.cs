@@ -8,13 +8,13 @@ namespace core.utils
 {
     public static class Normalizer
     {
-        public static Laptops Normalize(this Laptops laptop)
+        public static Laptop Normalize(this Laptop laptop)
         {
             // TODO
             // string: TRIM
             return laptop.NormalizeString();
         }
-        public static Laptops NormalizeString(this Laptops laptop)
+        private static Laptop NormalizeString(this Laptop laptop)
         {
             var strPros = laptop.GetType().GetProperties()
                 .Where(e => e.PropertyType == typeof(string));
