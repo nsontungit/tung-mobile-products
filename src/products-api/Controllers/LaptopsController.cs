@@ -20,9 +20,9 @@ namespace products_api.Controllers
             _laptopService = laptopService;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllByPage([FromQuery] int pageSize, [FromQuery] int pageNumber)
         {
-            var laptops = await _laptopService.GetAll();
+            var laptops = await _laptopService.GetLaptopsByPage(pageSize, pageNumber);
             return Ok(ApiResultCreator.Create(laptops));
         }
         [HttpGet("options/{type}")]

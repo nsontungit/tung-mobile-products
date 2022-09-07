@@ -14,6 +14,7 @@ namespace core.services
     public interface ILaptopsService
     {
         Task GetOne(int id);
+        Task<PagingResponse<Laptop>> GetLaptopsByPage(int pageSize, int pageNumber);
         Task<Laptop[]> GetAll();
         Task GetMany();
         Task CreateOne(LaptopDto laptopDto);
@@ -109,6 +110,28 @@ namespace core.services
                 .Where(o => o.Table == "brand" && o.Type == "laptop-brand")
                 .ToArrayAsync();
             return options;
+        }
+
+        public async Task<PagingResponse<Laptop>> GetLaptopsByPage(int pageSize, int pageNumber)
+        {
+            var totalRowsTask = _context.Laptop.CountAsync();
+            var laptopsTask = _context.Laptop
+                .OrderByDescending(e => e.Created)
+                .Skip(pageSize * pageNumber)
+                .Take(pageSize)
+                .ToArrayAsync();
+
+            await Task.WhenAll(totalRowsTask, laptopsTask);
+
+            var laptops = await laptopsTask;
+            var totalRows = await totalRowsTask;
+            var totalPages = MathF.Floor((float)totalRows / pageSize);
+            return new PagingResponse<Laptop>()
+            {
+                Data = laptops,
+                TotalPages = (int)totalPages,
+                TotalRows = totalRows
+            };
         }
     }
 }
