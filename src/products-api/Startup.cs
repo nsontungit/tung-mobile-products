@@ -4,6 +4,7 @@ using entities.main;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,7 +31,10 @@ namespace products_api
         {
             services.AddCors();
             services.AddControllers().AddNewtonsoftJson();
-            services.AddDbContext<productsContext>();
+            services.AddDbContext<productsContext>(o =>
+            {
+                o.UseMySQL(Configuration["ConnectionStrings:products"]);
+            });
             services.AddAutoMapper(typeof(EntityMapperProfile));
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Products", Version = "v1" }));
 
