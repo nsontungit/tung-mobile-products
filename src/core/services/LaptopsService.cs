@@ -19,7 +19,7 @@ namespace core.services
         Task GetMany();
         Task CreateOne(LaptopDto laptopDto);
         Task CreateMany();
-        Task UpdateOne(int id);
+        Task UpdateOne(int id, LaptopDto model);
         Task UpdateMany();
         Task DeleteOne(int id);
         Task DeleteMany();
@@ -91,9 +91,16 @@ namespace core.services
             throw new NotImplementedException();
         }
 
-        public Task UpdateOne(int id)
+        public async Task UpdateOne(int id, LaptopDto model)
         {
-            throw new NotImplementedException();
+            var laptopDb = await _context.Laptop.FindAsync(id);
+            if (laptopDb == null)
+                throw new Exception("Not found laptop");
+            laptopDb = Converter.OverrideObject<LaptopDto, Laptop>(model, laptopDb);
+            var now = DateTime.Now;
+            laptopDb.LastUpdate = now;
+            _context.Laptop.Update(laptopDb);
+            _context.SaveChanges();
         }
 
         public async Task<Option[]> GetAllOptions()

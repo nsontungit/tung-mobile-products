@@ -50,6 +50,12 @@ namespace products_api.Controllers
             await _laptopService.CreateOne(laptopDto);
             return Ok(ApiResultCreator.Create(null, "Create new laptop successfully"));
         }
-        
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateLaptop([FromRoute] int id, [FromBody]LaptopDto laptopDto)
+        {
+            await _laptopService.UpdateOne(id, laptopDto);
+            return Ok(ApiResultCreator.Create(null, "Update the laptop successfully"));
+        }
     }
 }
